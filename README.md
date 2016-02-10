@@ -1,4 +1,3 @@
-RubySchool, Lesson 24
-====================
+barber shop 
 
-Repository for Lesson 24
+kokoko131
