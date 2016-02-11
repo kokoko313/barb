@@ -11,10 +11,8 @@ end
 
 configure do
 	db = get_db
-	# db = SQLite3::Database.new 'barbershop.db'
 	db.execute 'CREATE TABLE IF NOT EXISTS
-		"Users"
-		(
+		"Users" (
 			"id" INTEGER PRIMARY KEY AUTOINCREMENT,
 			"username" TEXT,
 			"phone" TEXT,
@@ -22,6 +20,12 @@ configure do
 			"barber" TEXT,
 			"color" TEXT
 		)'
+	db.execute 'CREATE TABLE IF NOT EXISTS
+		"Barbers" (
+			"id" INTEGER PRIMARY KEY AUTOINCREMENT,
+			"barbername" TEXT
+		)'
+
 end
 
 get '/' do
@@ -33,7 +37,11 @@ get '/about' do
 end
 
 get '/visit' do
+
+	db = get_db
+	@barberlist = db.execute 'select barbername from Barbers order by id desc'
 	erb :visit
+
 end
 
 post '/visit' do
@@ -67,6 +75,8 @@ post '/visit' do
 		)
 		values (?, ?, ?, ?, ?)', [@username, @phone, @datetime, @barber, @color]
 
+	
+	
 	erb "OK, username is #{@username}, #{@phone}, #{@datetime}, #{@barber}, #{@color}"
 
 end
@@ -76,7 +86,6 @@ get '/showusers' do
 	db = get_db
 
 	@results = db.execute 'select * from Users order by id desc'
-
 	erb :showusers
 
 end
