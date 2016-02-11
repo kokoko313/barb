@@ -3,8 +3,15 @@ require 'sinatra'
 require 'sinatra/reloader'
 require 'sqlite3'
 
-configure do
+def get_db
 	db = SQLite3::Database.new 'barbershop.db'
+	db.results_as_hash = true
+	return db
+end
+
+configure do
+	db = get_db
+	# db = SQLite3::Database.new 'barbershop.db'
 	db.execute 'CREATE TABLE IF NOT EXISTS
 		"Users"
 		(
@@ -65,19 +72,13 @@ post '/visit' do
 end
 
 get '/showusers' do
-  erb "Hello World"
-  
-  	db = get_db
-  	db.execute 'SELECT * FROM Users' 
-  # # 	erb puts row
-  # # 	erb puts '============'
-  # end
+
+	db = get_db
+
+	@results = db.execute 'select * from Users order by id desc'
+
+	erb :showusers
 
 end
 
 
-def get_db
-	db = SQLite3::Database.new 'barbershop.db'
-	db.return_as_hash = true
-	return db
-end
